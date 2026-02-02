@@ -81,79 +81,7 @@ ig_unfollow/
 
 ## Step 4: Python Script
 
-Save the following as **`unfollow_check.py`**:
-
-```python
-import json
-from pathlib import Path
-
-def load_usernames(path: Path) -> set[str]:
-    data = json.loads(path.read_text(encoding="utf-8"))
-
-    candidates = []
-    if isinstance(data, list):
-        candidates = data
-    elif isinstance(data, dict):
-        for key in (
-            "relationships_following",
-            "relationships_followers",
-            "following",
-            "followers",
-        ):
-            if key in data and isinstance(data[key], list):
-                candidates = data[key]
-                break
-        if not candidates:
-            for v in data.values():
-                if isinstance(v, list):
-                    candidates = v
-                    break
-
-    usernames = set()
-
-    for item in candidates:
-        if not isinstance(item, dict):
-            continue
-
-        sld = item.get("string_list_data")
-        if isinstance(sld, list) and sld:
-            val = sld[0].get("value")
-            if isinstance(val, str):
-                usernames.add(val.strip().lstrip("@").lower())
-                continue
-
-        for key in ("username", "value"):
-            val = item.get(key)
-            if isinstance(val, str):
-                usernames.add(val.strip().lstrip("@").lower())
-                break
-
-    return usernames
-
-
-def main():
-    followers = load_usernames(Path("followers.json"))
-    following = load_usernames(Path("following.json"))
-
-    not_following_back = sorted(following - followers)
-
-    print(f"Following: {len(following)}")
-    print(f"Followers: {len(followers)}")
-    print(f"Not following you back: {len(not_following_back)}\n")
-
-    for u in not_following_back:
-        print(u)
-
-    Path("not_following_back.txt").write_text(
-        "\n".join(not_following_back), encoding="utf-8"
-    )
-
-    print("\nSaved → not_following_back.txt")
-
-
-if __name__ == "__main__":
-    main()
-```
+Save file as **`unfollow_check.py`**:
 
 ---
 
@@ -171,7 +99,7 @@ Output:
 * File created:
 
 ```
-not_following_back.txt
+not_following_back.csv
 ```
 
 ---
@@ -215,9 +143,7 @@ This script **only reads data you own**. You are responsible for how you use the
 
 ## Optional Next Steps
 
-* Add a CSV export
 * Compare mutuals only
 * Build a UI
 * Add whitelist / ignore list
 
-If you want any of those, say the word.
