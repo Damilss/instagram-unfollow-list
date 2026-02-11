@@ -1,3 +1,8 @@
+#project speccific 
+followers.json
+following.json
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
