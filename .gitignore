@@ -1,6 +1,7 @@
 #project speccific 
 followers.json
 following.json
+not_following_back.csv
 
 
 # Byte-compiled / optimized / DLL files

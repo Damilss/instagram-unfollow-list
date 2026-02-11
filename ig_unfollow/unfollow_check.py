@@ -16,6 +16,7 @@ DEFAULT_FOLLOWING_FILE = "following.json"
 OUTPUT_FILE = "not_following_back.csv"
 
 
+
 def _extract_candidates(data: Any) -> list[dict[str, Any]]:
     """Return a list of dict items that likely contain usernames."""
     if isinstance(data, list):
@@ -67,7 +68,7 @@ def load_usernames(path: Path) -> set[str]:
                     usernames.add(_normalize_username(value))
                     continue
 
-        for key in ("username", "value"):
+        for key in ("title", "username", "value"):
             value = item.get(key)
             if isinstance(value, str) and value.strip():
                 usernames.add(_normalize_username(value))
@@ -86,8 +87,10 @@ def write_csv(path: Path, usernames: list[str]) -> None:
 
 
 def main() -> None:
-    followers_path = Path(DEFAULT_FOLLOWERS_FILE)
-    following_path = Path(DEFAULT_FOLLOWING_FILE)
+    script_dir = Path(__file__).parent
+    followers_path = script_dir / DEFAULT_FOLLOWERS_FILE
+    following_path = script_dir / DEFAULT_FOLLOWING_FILE
+    output_path = script_dir / OUTPUT_FILE
 
     if not followers_path.exists():
         raise SystemExit(
@@ -110,7 +113,7 @@ def main() -> None:
     for username in not_following_back:
         print(username)
 
-    write_csv(Path(OUTPUT_FILE), not_following_back)
+    write_csv(output_path, not_following_back)
     print(f"\nSaved → {OUTPUT_FILE}")
 
 
